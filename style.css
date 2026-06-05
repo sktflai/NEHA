@@ -3,30 +3,32 @@ body {
     font-family: sans-serif;
 }
 
+/* HEADER */
 header {
     background: #E4007F;
     color: white;
     padding: 12px;
     display: flex;
     align-items: center;
+    gap: 10px;
 }
 
 #menuButton {
     font-size: 20px;
-    margin-right: 10px;
 }
 
 /* SIDEBAR */
 #sidebar {
     position: fixed;
-    left: -220px;
     top: 0;
-    width: 220px;
+    left: -240px;
+    width: 240px;
     height: 100%;
     background: #111;
     color: white;
     padding: 20px;
     transition: 0.3s;
+    z-index: 1000;
 }
 
 #sidebar.open {
@@ -40,11 +42,16 @@ header {
     border: none;
     padding: 10px 0;
     text-align: left;
+    width: 100%;
 }
 
-/* PAGE */
-.page {
+/* MAIN */
+main {
     padding: 15px;
+}
+
+.page {
+    display: block;
 }
 
 .item {
