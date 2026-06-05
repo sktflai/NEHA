@@ -1,48 +1,50 @@
-console.log("NEHA FINAL SYNC LOADED");
+console.log("NEHA FULL SYSTEM LOADED");
 
 let data = [];
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    // =========================
-    // MENU BUTTON (you MUST add this in HTML later if not present)
-    // =========================
     const menuButton = document.getElementById("menuButton");
     const sidebar = document.getElementById("sidebar");
 
-    if (menuButton && sidebar) {
-        menuButton.addEventListener("click", () => {
-            sidebar.classList.toggle("open");
-        });
-    }
+    // =========================
+    // SIDEBAR OPEN / CLOSE
+    // =========================
+
+    menuButton.addEventListener("click", (e) => {
+        e.stopPropagation();
+        sidebar.classList.toggle("open");
+    });
+
+    // close when clicking outside
+    document.addEventListener("click", (e) => {
+        if (!sidebar.contains(e.target) && e.target !== menuButton) {
+            sidebar.classList.remove("open");
+        }
+    });
 
     // =========================
-    // ADD PRODUCT
+    // ADD ITEM
     // =========================
-    const addBtn = document.getElementById("addBtn");
 
-    if (addBtn) {
-        addBtn.addEventListener("click", () => {
+    document.getElementById("addBtn").addEventListener("click", () => {
 
-            const name = document.getElementById("productSelect").value;
-            const expiry = document.getElementById("expiryInput").value;
+        const name = document.getElementById("productSelect").value;
+        const expiry = document.getElementById("expiryInput").value;
 
-            if (!expiry) {
-                alert("期限を入力してください");
-                return;
-            }
+        if (!expiry) {
+            alert("期限を入力してください");
+            return;
+        }
 
-            data.push({
-                name,
-                expiry,
-                status: "有効"
-            });
-
-            renderAll();
+        data.push({
+            name,
+            expiry
         });
-    }
 
-    // initial render
+        renderAll();
+    });
+
     renderAll();
 });
 
@@ -80,11 +82,9 @@ function renderAll() {
 function renderList() {
 
     const list = document.getElementById("list");
-    if (!list) return;
-
     list.innerHTML = "";
 
-    data.forEach((item, i) => {
+    data.forEach(item => {
 
         const div = document.createElement("div");
         div.className = "item";
@@ -105,20 +105,18 @@ function renderList() {
 function renderToday() {
 
     const container = document.getElementById("todayContent");
-    if (!container) return;
+    container.innerHTML = "";
 
     const today = new Date().toISOString().split("T")[0];
 
-    const todayItems = data.filter(p => p.expiry === today);
+    const items = data.filter(p => p.expiry === today);
 
-    container.innerHTML = "";
-
-    if (todayItems.length === 0) {
+    if (items.length === 0) {
         container.innerHTML = "本日の対象なし";
         return;
     }
 
-    todayItems.forEach(item => {
+    items.forEach(item => {
 
         const div = document.createElement("div");
         div.className = "item";
@@ -133,14 +131,12 @@ function renderToday() {
 }
 
 // =========================
-// CALENDAR (simple version)
+// CALENDAR
 // =========================
 
 function renderCalendar() {
 
     const container = document.getElementById("calendarContent");
-    if (!container) return;
-
     container.innerHTML = "";
 
     data.forEach(item => {
