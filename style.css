@@ -1,9 +1,18 @@
+/* =========================
+   NEHAプリ FULL CSS
+   iPhone-friendly sidebar version
+   ========================= */
+
 body {
     margin: 0;
     font-family: sans-serif;
+    background: #ffffff;
 }
 
-/* HEADER */
+/* =========================
+   HEADER
+   ========================= */
+
 header {
     background: #E4007F;
     color: white;
@@ -14,21 +23,27 @@ header {
 }
 
 #menuButton {
-    font-size: 20px;
+    font-size: 22px;
+    background: none;
+    border: none;
+    color: white;
 }
 
-/* SIDEBAR */
+/* =========================
+   SIDEBAR (MOBILE OVERLAY)
+   ========================= */
+
 #sidebar {
     position: fixed;
     top: 0;
-    left: -240px;
+    left: -260px;
     width: 240px;
-    height: 100%;
+    height: 100vh;
     background: #111;
     color: white;
     padding: 20px;
-    transition: 0.3s;
-    z-index: 1000;
+    transition: left 0.3s ease;
+    z-index: 2000;
 }
 
 #sidebar.open {
@@ -37,25 +52,69 @@ header {
 
 #sidebar button {
     display: block;
-    background: none;
-    color: white;
-    border: none;
-    padding: 10px 0;
-    text-align: left;
     width: 100%;
+    padding: 12px 0;
+    background: none;
+    border: none;
+    color: white;
+    text-align: left;
+    font-size: 16px;
 }
 
-/* MAIN */
+/* =========================
+   BACKDROP (DARK OVERLAY)
+   ========================= */
+
+#backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.4);
+    display: none;
+    z-index: 1500;
+}
+
+#backdrop.show {
+    display: block;
+}
+
+/* =========================
+   MAIN CONTENT
+   ========================= */
+
 main {
     padding: 15px;
 }
 
+/* PAGES */
 .page {
+    display: none;
+}
+
+.page.active {
     display: block;
 }
+
+/* =========================
+   ITEMS (LIST CARDS)
+   ========================= */
 
 .item {
     padding: 10px;
     border: 1px solid #ddd;
     margin-bottom: 10px;
+    border-radius: 6px;
+    background: #fff;
+}
+
+/* =========================
+   INPUTS
+   ========================= */
+
+select,
+input,
+button {
+    font-size: 16px;
 }
