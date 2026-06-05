@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>NEHAプリ</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Prevent text selection and optimize touch response on iOS */
+    body {
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
+
+  <!-- Header -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-30 px-4 py-3 flex items-center justify-between">
+    <div class="flex items-center space-x-3">
+      <!-- Menu Button -->
+      <button id="menu-btn" class="p-2 text-slate-600 hover:bg-slate-100 rounded-lg focus:outline-none" aria-label="Menu">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+      </button>
+      <h1 class="text-lg font-bold text-slate-900 tracking-wider">NEHAプリ</h1>
+    </div>
+    <div id="active-screen-title" class="text-sm font-medium text-slate-500">本日の作業</div>
+  </header>
+
+  <!-- Sidebar Overlay (Backdrop) -->
+  <div id="sidebar-overlay" class="fixed inset-0 bg-slate-900/40 z-40 hidden transition-opacity duration-300 opacity-0"></div>
+
+  <!-- Sidebar Container -->
+  <aside id="sidebar" class="fixed inset-y-0 left-0 w-72 bg-white z-50 transform -translate-x-full transition-transform duration-300 ease-in-out flex flex-col shadow-2xl">
+    <!-- Sidebar Header -->
+    <div class="p-4 border-b border-slate-200 flex items-center justify-between">
+      <span class="text-lg font-bold text-slate-900">メニュー</span>
+      <button id="close-sidebar-btn" class="p-2 text-slate-500 hover:bg-slate-100 rounded-lg">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Navigation Links -->
+    <nav class="flex-1 p-4 space-y-2">
+      <button onclick="switchScreen('today')" class="nav-link w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left font-medium transition-colors bg-blue-50 text-blue-700" data-screen="today">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+        </svg>
+        <span>本日の作業</span>
+      </button>
+
+      <button onclick="switchScreen('calendar')" class="nav-link w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left font-medium transition-colors text-slate-600 hover:bg-slate-100" data-screen="calendar">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+        </svg>
+        <span>カレンダー</span>
+      </button>
+
+      <button onclick="switchScreen('history')" class="nav-link w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left font-medium transition-colors text-slate-600 hover:bg-slate-100" data-screen="history">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <span>履歴</span>
+      </button>
+
+      <button onclick="switchScreen('settings')" class="nav-link w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left font-medium transition-colors text-slate-600 hover:bg-slate-100" data-screen="settings">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+        </svg>
+        <span>設定</span>
+      </button>
+    </nav>
+
+    <!-- Sidebar Footer Info -->
+    <div class="p-4 border-t border-slate-200 text-xs text-slate-400 text-center">
+      NEHAプリ v1.0.0
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <main class="flex-1 p-4 max-w-md mx-auto w-full">
+
+    <!-- Screen 1: Today's Work -->
+    <section id="screen-today" class="screen-panel space-y-4">
+      <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+        <h2 class="text-base font-bold text-slate-800 mb-2">登録されている商品 (全9種)</h2>
+        <p class="text-xs text-slate-500 mb-4">パンの登録リストです。ステップ2で詳細な管理ワークフローを追加します。</p>
+        
+        <div id="product-list-placeholder" class="divide-y divide-slate-100">
+          <!-- Populated by JavaScript -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Screen 2: Calendar -->
+    <section id="screen-calendar" class="screen-panel hidden space-y-4">
+      <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm text-center py-12">
+        <svg class="w-12 h-12 text-slate-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+        </svg>
+        <h2 class="text-lg font-bold text-slate-700">カレンダー表示</h2>
+        <p class="text-sm text-slate-400 mt-1">ステップ3にてカレンダー機能を実装します。</p>
+      </div>
+    </section>
+
+    <!-- Screen 3: History -->
+    <section id="screen-history" class="screen-panel hidden space-y-4">
+      <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm text-center py-12">
+        <svg class="w-12 h-12 text-slate-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <h2 class="text-lg font-bold text-slate-700">作業履歴 (90日間保存)</h2>
+        <p class="text-sm text-slate-400 mt-1">ステップ4にて履歴ログ保存機能を実装します。</p>
+      </div>
+    </section>
+
+    <!-- Screen 4: Settings -->
+    <section id="screen-settings" class="screen-panel hidden space-y-4">
+      <!-- Info Card -->
+      <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-3">
+        <h2 class="text-lg font-bold text-slate-800">アプリ設定</h2>
+        <p class="text-sm text-slate-600">ローカルストレージのデータ管理やシステムの初期化を行います。</p>
+      </div>
+
+      <!-- Danger Zone Card -->
+      <div class="bg-white p-5 rounded-xl border border-red-100 shadow-sm space-y-4">
+        <h3 class="text-sm font-bold text-red-600 tracking-wider uppercase">危険ゾーン</h3>
+        <p class="text-xs text-slate-500 leading-relaxed">全ての履歴データ、在庫データ、製品設定をリセットし、初期状態に戻します。この操作は取り消せません。</p>
+        
+        <button id="reset-data-btn" class="w-full bg-red-50 hover:bg-red-100 text-red-600 font-bold py-3 px-4 rounded-lg transition-colors text-sm border border-red-200">
+          データを初期化する
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- JavaScript logic -->
+  <script>
+    // --- 1. Product Setup Data ---
+    const DEFAULT_PRODUCTS = [
+      { id: 1, name: "つぶあん" },
+      { id: 2, name: "こしあん" },
+      { id: 3, name: "シナモン" },
+      { id: 4, name: "抹茶" },
+      { id: 5, name: "バナナ" },
+      { id: 6, name: "北海道クリーム" },
+      { id: 7, name: "塩バター" },
+      { id: 8, name: "チーズ" },
+      { id: 9, name: "カレー" }
+    ];
+
+    // --- 2. LocalStorage Keys ---
+    const STORAGE_KEY_PRODUCTS = "neha_products";
+    const STORAGE_KEY_HISTORY = "neha_history";
+    const STORAGE_KEY_INVENTORY = "neha_inventory";
+
+    // Initialize application state
+    function initDataStore(forceReset = false) {
+      if (forceReset || !localStorage.getItem(STORAGE_KEY_PRODUCTS)) {
+        localStorage.setItem(STORAGE_KEY_PRODUCTS, JSON.stringify(DEFAULT_PRODUCTS));
+        localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify([]));
+        localStorage.setItem(STORAGE_KEY_INVENTORY, JSON.stringify([]));
+      }
+    }
+
+    // --- 3. Sidebar UI Interactions ---
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOverlay = document.getElementById('sidebar-overlay');
+    const menuBtn = document.getElementById('menu-btn');
+    const closeSidebarBtn = document.getElementById('close-sidebar-btn');
+
+    function openSidebar() {
+      sidebarOverlay.classList.remove('hidden');
+      setTimeout(() => {
+        sidebarOverlay.classList.remove('opacity-0');
+        sidebar.classList.remove('-translate-x-full');
+      }, 20);
+    }
+
+    function closeSidebar() {
+      sidebarOverlay.classList.add('opacity-0');
+      sidebar.classList.add('-translate-x-full');
+      setTimeout(() => {
+        sidebarOverlay.classList.add('hidden');
+      }, 300);
+    }
+
+    menuBtn.addEventListener('click', openSidebar);
+    closeSidebarBtn.addEventListener('click', closeSidebar);
+    sidebarOverlay.addEventListener('click', closeSidebar);
+
+    // --- 4. Navigation Control ---
+    function switchScreen(screenId) {
+      // Hide all panels
+      const panels = document.querySelectorAll('.screen-panel');
+      panels.forEach(p => p.classList.add('hidden'));
+
+      // Show requested panel
+      const targetPanel = document.getElementById(`screen-${screenId}`);
+      if (targetPanel) targetPanel.classList.remove('hidden');
+
+      // Update Navigation Links style
+      const navLinks = document.querySelectorAll('.nav-link');
+      navLinks.forEach(link => {
+        if (link.getAttribute('data-screen') === screenId) {
+          link.classList.remove('text-slate-600', 'hover:bg-slate-100');
+          link.classList.add('bg-blue-50', 'text-blue-700');
+        } else {
+          link.classList.remove('bg-blue-50', 'text-blue-700');
+          link.classList.add('text-slate-600', 'hover:bg-slate-100');
+        }
+      });
+
+      // Update Header Text
+      const headerTitle = document.getElementById('active-screen-title');
+      const screenNames = {
+        'today': '本日の作業',
+        'calendar': 'カレンダー',
+        'history': '履歴',
+        'settings': '設定'
+      };
+      headerTitle.textContent = screenNames[screenId] || '';
+
+      // Close sidebar menu
+      closeSidebar();
+    }
+
+    // --- 5. Reset System Control ---
+    const resetBtn = document.getElementById('reset-data-btn');
+    resetBtn.addEventListener('click', () => {
+      const codeInput = prompt("初期化コード (0409) を入力してください：");
+      if (codeInput === null) return; // user cancelled
+
+      if (codeInput === "0409") {
+        initDataStore(true);
+        alert("データの初期化が完了しました。");
+        window.location.reload();
+      } else {
+        alert("コードが正しくありません。初期化を中止しました。");
+      }
+    });
+
+    // --- 6. Rendering Elements ---
+    function renderProductList() {
+      const listElement = document.getElementById('product-list-placeholder');
+      const products = JSON.parse(localStorage.getItem(STORAGE_KEY_PRODUCTS)) || [];
+      
+      listElement.innerHTML = '';
+      products.forEach(p => {
+        const item = document.createElement('div');
+        item.className = 'py-3 flex items-center justify-between text-sm';
+        item.innerHTML = `
+          <span class="font-medium text-slate-800">${p.name}</span>
+          <span class="text-xs bg-slate-100 text-slate-500 px-2.5 py-1 rounded-full">管理対象</span>
+        `;
+        listElement.appendChild(item);
+      });
+    }
+
+    // --- 7. Application Startup ---
+    window.addEventListener('DOMContentLoaded', () => {
+      initDataStore();
+      renderProductList();
+    });
+  </script>
+</body>
+</html>
