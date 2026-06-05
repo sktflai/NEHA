@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEHAプリ</title>
+
+<link rel="stylesheet" href="style.css">
+
+<!-- IMPORTANT: defer prevents dead page issues -->
+<script src="app.js" defer></script>
+</head>
+
+<body>
+
+<header>
+    <button id="menuButton">☰</button>
+    <h2>NEHAプリ</h2>
+</header>
+
+<!-- SIDEBAR -->
+<div id="sidebar">
+    <button onclick="showPage('today')">本日の作業</button>
+    <button onclick="showPage('calendar')">カレンダー</button>
+    <button onclick="showPage('settings')">設定</button>
+</div>
+
+<!-- PAGES -->
+<main>
+
+    <section id="todayPage" class="page">
+        <h2>本日の作業</h2>
+        <div id="todayContent"></div>
+    </section>
+
+    <section id="calendarPage" class="page" style="display:none;">
+        <h2>カレンダー</h2>
+        <div id="calendarContent"></div>
+    </section>
+
+    <section id="settingsPage" class="page" style="display:none;">
+        <h2>設定</h2>
+
+        <select id="productSelect">
+            <option>つぶあん</option>
+            <option>こしあん</option>
+            <option>シナモン</option>
+            <option>抹茶</option>
+            <option>バナナ</option>
+            <option>北海道クリーム</option>
+            <option>塩バター</option>
+            <option>チーズ</option>
+            <option>カレー</option>
+        </select>
+
+        <input type="date" id="expiryInput">
+        <button id="addBtn">追加</button>
+
+        <hr>
+
+        <div id="list"></div>
+    </section>
+
+</main>
+
+</body>
+</html>
